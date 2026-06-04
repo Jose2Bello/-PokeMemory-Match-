@@ -14,7 +14,7 @@ body {
 
 #app-container {
     width: 95vw;
-    max-width: 700px; /* Tamaño controlado para mantener el tablero compacto */
+    max-width: 900px; 
     padding: 20px;
     box-sizing: border-box;
 }
@@ -71,14 +71,11 @@ button:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px;
+    padding: 8px 15px; 
     background: rgba(0,0,0,0.3);
     border-radius: 8px;
+    font-size: 1.1rem;
 }
-
-/* ==========================================================================
-   EL TABLERO (Control estricto de altura para evitar desbordes)
-   ========================================================================== */
 #game-board {
     background-color: rgba(0, 0, 0, 0.4);
     padding: 15px;
@@ -86,15 +83,12 @@ button:hover {
     box-shadow: 0 8px 24px rgba(0,0,0,0.5);
     perspective: 1000px;
     
-    display: grid !important; /* Forzamos comportamiento de rejilla */
+    display: grid !important;
     width: 100%;
-    max-height: 65vh; /* Evita que el tablero se desborde verticalmente */
-    box-sizing: border-box;
+    max-height: 80vh; 
 }
 
-/* ==========================================================================
-   LAS CARTAS Y ANIMACIÓN FLIP 3D
-   ========================================================================== */
+
 .card {
     width: 100%;
     height: 100%;
@@ -102,7 +96,7 @@ button:hover {
     cursor: pointer;
     background-color: transparent;
     box-sizing: border-box;
-    min-height: 0; /* Permite reducción matemática en grids densos */
+    min-height: 0; 
 }
 
 .card-inner {
@@ -144,7 +138,7 @@ button:hover {
 }
 
 .card-front img {
-    width: 85%;
-    height: 85%;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
 }
