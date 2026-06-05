@@ -32,10 +32,9 @@ function createBoard(cards, difficulty, styles) {
         cardElement.dataset.pokemonId = cardData.id;
         cardElement.dataset.index = index;
 
-        // --- CONEXIÓN DE EVENT LISTENER CON GAME.JS ---
+     
         cardElement.addEventListener("click", () => handleCardClick(cardElement));
-        // -----------------------------------------------
-
+        
         const cardInner = document.createElement("div");
         cardInner.classList.add("card-inner");
 

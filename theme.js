@@ -1,14 +1,11 @@
-/* js/theme.js 
-   Catálogo oficial de temáticas Pokémon (Kanto, Hoenn, Sinnoh).
-   Ajustado a la estructura de raíz del proyecto.
-*/
+
 
 const THEMES_CATALOG = {
     kanto: {
         name: "Región de Kanto",
-        folder: "Kanto/",            // Apunta a la carpeta en la raíz
-        cardColor: "#E3350D",       // Rojo Pokéball
-        accentColor: "#31A7D7",     // Azul agua
+        folder: "Kanto/",            
+        cardColor: "#E3350D",       
+        accentColor: "#31A7D7",     
         bgClass: "theme-kanto",
         images: [
             "alakazam-f.png", "arcanine.png", "articuno.png", "blastoise.png",
@@ -23,9 +20,9 @@ const THEMES_CATALOG = {
     },
     hoenn: {
         name: "Región de Hoenn",
-        folder: "Hoenn/",            // Apunta a la carpeta en la raíz
-        cardColor: "#007A78",       // Verde Esmeralda
-        accentColor: "#E08300",     // Naranja
+        folder: "Hoenn/",            
+        cardColor: "#007A78",       
+        accentColor: "#E08300",     
         bgClass: "theme-hoenn",
         images: [
             "absol.png", "aggron.png", "altaria.png", "banette.png",
@@ -40,9 +37,9 @@ const THEMES_CATALOG = {
     },
     sinnoh: {
         name: "Región de Sinnoh",
-        folder: "Sinnoh/",           // Apunta a la carpeta en la raíz
-        cardColor: "#4A3B5C",       // Morado místico
-        accentColor: "#C0C0C0",     // Gris Platino
+        folder: "Sinnoh/",           
+        cardColor: "#4A3B5C",       
+        accentColor: "#C0C0C0",     
         bgClass: "theme-sinnoh",
         images: [
             "abomasnow-f.png", "arceus-normal.png", "azelf.png", "cresselia.png",
@@ -79,7 +76,7 @@ function getThemeAssets(themeKey, pairCount) {
     const deck = [];
 
     selectedPokemon.forEach(imgName => {
-        const fullPath = `${theme.folder}${imgName}`; // Construye Kanto/archivo.png
+        const fullPath = `${theme.folder}${imgName}`; 
         const pokemonName = imgName.split('.')[0];
 
         const cardData = {

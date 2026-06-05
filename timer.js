@@ -2,9 +2,7 @@ let timerInterval = null;
 let timeElapsed = 0; // Para modo libre (cuenta ascendente)
 let timeRemaining = 0; // Para modo tiempo (cuenta descendente)
 let currentGameMode = "free";
-
 /**
- * Inicia el temporizador según el modo seleccionado.
  * @param {string} mode - 'free' o 'time'
  * @param {string} difficulty - Para calcular el límite de tiempo del modo contrarreloj
  */
