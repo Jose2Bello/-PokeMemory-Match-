@@ -1,7 +1,10 @@
+@import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
 
 body {
     margin: 0;
-    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
     background-color: #1e1e24;
     color: #ffffff;
     display: flex;
@@ -158,4 +161,37 @@ button:hover {
     filter: drop-shadow(0px 6px 10px rgba(0, 0, 0, 0.35)); 
     
     user-select: none;    
+}
+
+.pokeball-css {
+  position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, #ff1c1c 50%, #ffffff 50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.pokeball-css::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 8px; /* Grosor de la línea central */
+    background-color: #232323;
+}
+
+.pokeball-css::after {
+    content: "";
+    position: absolute;
+    width: 35px;  /* Tamaño del botón, se ajusta al centro */
+    height: 35px;
+    background-color: #ffffff;
+    border: 8px solid #232323;
+    border-radius: 50%;
+    box-sizing: border-box;
+    z-index: 2;
 }
