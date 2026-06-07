@@ -32,6 +32,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 
                 document.body.className = ""; 
                 document.body.classList.add(`theme-${selectedTheme}`); 
+                
+            
                 document.getElementById("hud-region").textContent = `Región: ${selectedTheme.toUpperCase()}`;
 
                
@@ -45,10 +47,10 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
-
 // ==========================================================================
 // CONTROL DEL BOTÓN DE SALIR (REGRESAR AL MENÚ)
 // ==========================================================================
+
 document.addEventListener("DOMContentLoaded", () => {
     const exitBtn = document.getElementById("exit-game-btn");
 
@@ -77,7 +79,49 @@ document.addEventListener("DOMContentLoaded", () => {
             const boardContainer = document.getElementById("game-board");
             if (boardContainer) boardContainer.innerHTML = "";
             
+            // --- ¡SOLUCIÓN 1! RESETEAR EL TEMA AL SALIR A MITAD DE PARTIDA ---
+            document.body.className = ""; 
           
+            if (typeof resetTurn === "function") {
+                resetTurn();
+            }
+            matchesFound = 0;
+        });
+    }
+});
+
+// ==========================================================================
+// CONTROL DEL BOTÓN VOLVER AL MENÚ (PANTALLA DE VICTORIA)
+// ==========================================================================
+document.addEventListener("DOMContentLoaded", () => {
+    const restartBtn = document.getElementById("restart-btn");
+
+    if (restartBtn) {
+        restartBtn.addEventListener("click", () => {
+            
+            if (typeof stopTimer === "function") {
+                stopTimer();
+            }
+
+            const timerElement = document.getElementById("hud-timer");
+            if (timerElement) timerElement.textContent = "00:00";
+
+            // Ocultamos la pantalla de victoria y mostramos el menú principal
+            document.getElementById("end-screen").classList.add("hidden");
+            document.getElementById("main-menu").classList.remove("hidden");
+
+            const pvpInfo = document.getElementById("hud-pvp-info");
+            const soloInfo = document.getElementById("hud-solo-info");
+            
+            if (pvpInfo) pvpInfo.classList.add("hidden");
+            if (soloInfo) soloInfo.classList.remove("hidden");
+
+            const boardContainer = document.getElementById("game-board");
+            if (boardContainer) boardContainer.innerHTML = "";
+            
+            // --- ¡SOLUCIÓN 2! RESETEAR EL TEMA AL VOLVER DESDE LA VICTORIA ---
+            document.body.className = ""; 
+
             if (typeof resetTurn === "function") {
                 resetTurn();
             }
