@@ -7,7 +7,9 @@ let matchesFound = 0;   // Contador de parejas logradas
 let totalPairsNeeded = 0; // Cantidad total de parejas según el nivel (16 cartas = 8 pares, 36 cartas = 18 pares, etc.)
 let flippedCards = []; // Guarda las dos cartas seleccionadas en el turno actual
 let lockBoard = false;  // Bandera de seguridad para bloquear clics durante animaciones
-
+let gameMode = "solo"; // Puede ser 'solo', 'time-attack' o 'pvp'
+let activePlayer = 1;  // Identifica si juega el Jugador 1 o el Jugador 2
+let pvpScores = { player1: 0, player2: 0 }; // Almacena los puntajes de cada jugador en modo PvP
 /**
  * Función que se ejecuta cada vez que el usuario hace clic en una carta.
  * @param {HTMLElement} cardElement - El contenedor de la carta cliqueada.
@@ -50,37 +52,50 @@ function checkForMatch() {
 /**
  * Si las cartas coinciden, se quedan fijas boca arriba y se limpian del estado.
  */
-function disableCards(card1, card2) {
+function disableCards() {
+    const [card1, card2] = flippedCards;
     card1.classList.add('matched');
     card2.classList.add('matched');
     
-    matchesFound++; // Aumentamos el contador de parejas encontradas
+    matchesFound++;
 
-    resetTurn();
+    // --- LOGICA PVP: Asignar punto al jugador activo ---
+    if (gameMode === "pvp") {
+        if (activePlayer === 1) {
+            pvpScores.player1++;
+        } else {
+            pvpScores.player2++;
+        }
+        updatePvpHUD();
+    }
 
-    // Verificación de victoria: si las parejas encontradas equivalen a las del mapa, ganaste
     if (matchesFound === totalPairsNeeded) {
-        const finalTime = stopTimer(); // Detiene el reloj de timer.js
-        setTimeout(() => endGame(true, finalTime), 600); // Pequeña espera para ver la última animación
+        endGame(true);
+    } else {
+        resetTurn(); // Limpia el array de cartas volteadas para el siguiente intento
     }
 }
-/**
- * Si las cartas NO coinciden, se bloquea el tablero un segundo y se vuelven a ocultar.
- */
-function unflipCards(card1, card2) {
-    lockBoard = true; // Congela el tablero para que el jugador no cliquee una tercera carta
+
+function unflipCards() {
+    lockBoard = true;
 
     setTimeout(() => {
+        const [card1, card2] = flippedCards;
         card1.classList.remove('flipped');
         card2.classList.remove('flipped');
-        
-        resetTurn(); // Libera el tablero y vacía el array de seleccionados
-    }, 1000); // 1000 milisegundos = 1 segundo de visualización
+
+        // --- LÓGICA PVP: Intercambiar turno al fallar ---
+        if (gameMode === "pvp") {
+            // Si es 1 pasa a 2, si no, pasa a 1
+            activePlayer = activePlayer === 1 ? 2 : 1; 
+            updatePvpHUD();
+        }
+
+        resetTurn();
+    }, 1000);
 }
 
-/**
- * Reinicia las variables de control al finalizar un turno.
- */
+
 function resetTurn() {
     flippedCards = [];
     lockBoard = false;
@@ -90,29 +105,88 @@ function resetTurn() {
 /**
  * @param {boolean} isWin
  * @param {string} finalTime
+ * 
  */
-function endGame(isWin, finalTime = "00:00") {
-    // Forzamos la detención del reloj por si acaso fue una derrota
-    if (!isWin) stopTimer();
+function endGame(isWin) {
+    // 1. Detenemos los relojes por si acaso estábamos en modo Solo/Time Attack
+    if (typeof stopTimer === "function") {
+        stopTimer();
+    }
 
-    // Ocultamos la pantalla de juego y mostramos la pantalla de resultados
-    document.getElementById("game-screen").classList.add("hidden");
+    const gameScreen = document.getElementById("game-screen");
     const endScreen = document.getElementById("end-screen");
-    endScreen.classList.remove("hidden");
-
-    const endTitle = document.getElementById("end-title");
     const endMessage = document.getElementById("end-message");
     const endTimeResult = document.getElementById("end-time-result");
 
-    endTimeResult.textContent = finalTime;
+    if (gameScreen && endScreen) {
+        gameScreen.classList.add("hidden");
+        endScreen.classList.remove("hidden");
 
-    if (isWin) {
-        endTitle.textContent = "¡Felicidades, Ganaste!";
-        endMessage.textContent = "quequerei...tengo 10 bs te sirven?.";
-        endTitle.style.color = "#ffcb05";
+        if (gameMode === "pvp") {
+            // Ocultamos el texto del tiempo porque en PvP no importa el reloj
+            if (endTimeResult) endTimeResult.classList.add("hidden");
+
+            // Evaluamos quién tiene más parejas guardadas en nuestro estado global
+            if (pvpScores.player1 > pvpScores.player2) {
+                endMessage.innerHTML = `¡Victoria para el <span style="color: #ffcb05;">Jugador 1</span>!<br>Puntaje: ${pvpScores.player1} a ${pvpScores.player2}`;
+            } else if (pvpScores.player2 > pvpScores.player1) {
+                endMessage.innerHTML = `¡Victoria para el <span style="color: #ffcb05;">Jugador 2</span>!<br>Puntaje: ${pvpScores.player2} a ${pvpScores.player1}`;
+            } else {
+                endMessage.innerHTML = `¡Empate técnico!<br>Ambos jugadores consiguieron ${pvpScores.player1} parejas.`;
+            }
+        } else {
+            // MODO SOLO: Muestra los mensajes clásicos de tiempo récord o derrota
+            if (endTimeResult) endTimeResult.classList.remove("hidden");
+            
+            if (isWin) {
+                endMessage.textContent = "¡Felicidades! Completaste el tablero.";
+                
+                const finalTime = document.getElementById("hud-timer")?.textContent || "00:00";
+                if (endTimeResult) endTimeResult.textContent = `Tiempo total: ${finalTime}`;
+            } else {
+                endMessage.textContent = "¡Se agotó el tiempo! Inténtalo de nuevo.";
+                if (endTimeResult) endTimeResult.textContent = "";
+            }
+        }
+    }
+}
+
+function initGameMode(mode) {
+    gameMode = mode;
+    activePlayer = 1;
+    pvpScores.player1 = 0;
+    pvpScores.player2 = 0;
+
+    const soloHud = document.getElementById("hud-solo-info");
+    const pvpInfo = document.getElementById("hud-pvp-info");
+
+    if (gameMode === "pvp") {
+        if (soloHud) soloHud.classList.add("hidden");
+        if (pvpInfo) {
+            pvpInfo.classList.remove("hidden");
+            updatePvpHUD(); // Refresca los textos de P1 y P2
+        }
     } else {
-        endTitle.textContent = "Seteacabo el tiempo bro";
-        endMessage.textContent = "El contador llegó a cero, perdiste! ¡Inténtalo de nuevo!";
-        endTitle.style.color = "#ff3333";
+        if (soloHud) soloHud.classList.remove("hidden");
+        if (pvpInfo) pvpInfo.classList.add("hidden");
+    }
+}
+
+function updatePvpHUD() {
+    const p1Element = document.getElementById("score-p1");
+    const p2Element = document.getElementById("score-p2");
+
+    if (p1Element && p2Element) {
+        p1Element.textContent = `P1: ${pvpScores.player1}`;
+        p2Element.textContent = `P2: ${pvpScores.player2}`;
+
+        // Agrega o quita la clase que hace brillar al jugador activo
+        if (activePlayer === 1) {
+            p1Element.classList.add("player-turn-indicator");
+            p2Element.classList.remove("player-turn-indicator");
+        } else {
+            p2Element.classList.add("player-turn-indicator");
+            p1Element.classList.remove("player-turn-indicator");
+        }
     }
 }

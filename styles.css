@@ -68,7 +68,22 @@ button:hover {
     background-color: #e2b403;
 }
 
-/* HUD superior del juego */
+#hud-pvp-info {
+    display: flex;
+    gap: 20px;
+    font-weight: bold;
+}
+
+
+.player-turn-indicator {
+    color: #ffcb05;
+    text-shadow: 0 0 8px rgba(255, 203, 5, 0.7);
+    border-bottom: 2px solid #ffcb05;
+    padding-bottom: 2px;
+    transition: all 0.3s ease-in-out; 
+}
+
+
 #game-hud {
     display: flex;
     justify-content: space-between;

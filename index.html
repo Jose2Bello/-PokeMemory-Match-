@@ -39,6 +39,7 @@
                     <select id="config-mode" required>
                         <option value="free">Modo Libre (Cronómetro)</option>
                         <option value="time">Contrarreloj (Cuenta Atrás)</option>
+                        <option value="pvp">Jugador vs Jugador (Local)</option>
                     </select>
                 </div>
 
@@ -47,27 +48,31 @@
         </section>
 
         <section id="game-screen" class="screen hidden">
-            <div id="game-hud">
-                <span id="hud-region">Región: Kanto</span>
-                <span id="hud-timer">Tiempo: 00:00</span>
-                <button id="btn-back" onclick="location.reload()">Volver al Menú</button>
-            </div>
+    <div id="game-hud">
+    <div id="hud-region">Región: KANTO</div>
+    
+    <div id="hud-solo-info">
+        <span id="hud-timer">00:00</span>
+    </div>
+
+    <div id="hud-pvp-info" class="hidden">
+        <span id="score-p1">P1: 0</span>
+        <span id="score-p2">P2: 0</span>
+    </div>
+
+    <button id="exit-game-btn">Salir</button>
+</div>
 
             <main id="game-board">
                 </main>
         </section>
 
-        <section id="end-screen" class="screen hidden">
-            <h1 id="end-title">¡Victoria!</h1>
-            <div id="end-stats">
-                <p id="end-message">¡Lograste emparejar todos los Pokémon!</p>
-                <p>Tiempo final: <span id="end-time-result">00:00</span></p>
-            </div>
-            <button id="btn-restart" onclick="location.reload()">Jugar de Nuevo</button>
-        </section>
-
+       <div id="end-screen" class="screen hidden">
+            <h2>¡Partida Terminada!</h2>
+            <p id="end-message"></p> 
+            <p id="end-time-result"></p>
+             <button id="restart-btn">Volver al Menú</button>
     </div>
-
     <script src="theme.js"></script>
     <script src="board.js"></script>
     <script src="timer.js"></script>
