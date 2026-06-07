@@ -43,7 +43,8 @@ function createBoard(cards, difficulty, styles) {
         cardBack.style.backgroundColor = styles.cardColor; 
         
         const pokeballIcon = document.createElement("span");
-        pokeballIcon.classList.add("pokeball-css"); // Le asignamos esta clase
+        pokeballIcon.classList.add("pokeball-css");
+        pokeballIcon.style.setProperty('--theme-color', styles.cardColor);
         cardBack.appendChild(pokeballIcon);
 
         const cardFront = document.createElement("div");
