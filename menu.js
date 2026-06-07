@@ -22,7 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
         if (gameData) {
             document.getElementById("main-menu").classList.add("hidden");
             document.getElementById("game-screen").classList.remove("hidden");
-            
+            document.body.className = ""; 
+            document.body.classList.add(`theme-${selectedTheme}`);
             document.getElementById("hud-region").textContent = `Región: ${selectedTheme.toUpperCase()}`;
 
             createBoard(gameData.cards, selectedDifficulty, gameData.styles);

@@ -196,3 +196,25 @@ button:hover {
     box-sizing: border-box;
     z-index: 2;
 }
+
+.theme-kanto {
+    background-image: url('assets/800px-Viridian_Forest_HGSS.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.theme-hoenn {
+    background-image: url('assets/Hoenn_Route_110_E.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.theme-sinnoh {
+    background-image: url('assets/320px-Sinnoh_Route_217_Pt.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+

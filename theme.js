@@ -4,7 +4,7 @@ const THEMES_CATALOG = {
     kanto: {
         name: "Región de Kanto",
         folder: "Kanto/",            
-        cardColor: "#E3350D",       
+        cardColor: "#e30d0d",       
         accentColor: "#31A7D7",     
         bgClass: "theme-kanto",
         images: [
@@ -21,7 +21,7 @@ const THEMES_CATALOG = {
     hoenn: {
         name: "Región de Hoenn",
         folder: "Hoenn/",            
-        cardColor: "#007A78",       
+        cardColor: "#08afac",       
         accentColor: "#E08300",     
         bgClass: "theme-hoenn",
         images: [
@@ -38,7 +38,7 @@ const THEMES_CATALOG = {
     sinnoh: {
         name: "Región de Sinnoh",
         folder: "Sinnoh/",           
-        cardColor: "#4A3B5C",       
+        cardColor: "#7942bb",       
         accentColor: "#C0C0C0",     
         bgClass: "theme-sinnoh",
         images: [
