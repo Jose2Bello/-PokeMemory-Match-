@@ -74,6 +74,18 @@ button:hover {
     font-weight: bold;
 }
 
+#pvp-names-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; 
+    margin-top: 15px;
+}
+
+#pvp-names-container.hidden {
+    display: none; /* Asegura que desaparezca por completo si está oculto */
+}
+
 
 .player-turn-indicator {
     color: #ffcb05;

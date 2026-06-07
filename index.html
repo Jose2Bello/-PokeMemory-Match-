@@ -8,14 +8,14 @@
 </head>
 <body>
 
-    <div id="app-container">
+  <div id="app-container">
         
-      <section id="main-menu" class="screen">
-        <div class="logo-container">
-        <img src="assets/pokememory%20match.png" id="game-logo" alt="PokeMemory Match Logo">
-        </div>
-    
-    <form id="game-config">
+        <section id="main-menu" class="screen">
+            <div class="logo-container">
+                <img src="assets/pokememory%20match.png" id="game-logo" alt="PokeMemory Match Logo">
+            </div>
+        
+            <form id="game-config">
                 <div class="form-group">
                     <label for="config-theme">Elige la Región:</label>
                     <select id="config-theme" required>
@@ -43,36 +43,49 @@
                     </select>
                 </div>
 
+                <div id="pvp-names-container" class="hidden">
+                    <div class="form-group">
+                        <label for="player1-name">Nombre Jugador 1:</label>
+                        <input type="text" id="player1-name" placeholder="Jugador 1" value="Jugador 1">
+                    </div>
+                    <div class="form-group">
+                        <label for="player2-name">Nombre Jugador 2:</label>
+                        <input type="text" id="player2-name" placeholder="Jugador 2" value="Jugador 2">
+                    </div>
+                </div>
+
                 <button type="submit" id="btn-start">Iniciar Juego</button>
             </form>
         </section>
 
         <section id="game-screen" class="screen hidden">
-    <div id="game-hud">
-    <div id="hud-region">Región: KANTO</div>
-    
-    <div id="hud-solo-info">
-        <span id="hud-timer">00:00</span>
-    </div>
+            <div id="game-hud">
+                <div id="hud-region">Región: KANTO</div>
+                
+                <div id="hud-solo-info">
+                    <span id="hud-timer">00:00</span>
+                </div>
 
-    <div id="hud-pvp-info" class="hidden">
-        <span id="score-p1">P1: 0</span>
-        <span id="score-p2">P2: 0</span>
-    </div>
+                <div id="hud-pvp-info" class="hidden">
+                    <span id="score-p1">P1: 0</span>
+                    <span id="score-p2">P2: 0</span>
+                </div>
 
-    <button id="exit-game-btn">Salir</button>
-</div>
+                <button id="exit-game-btn">Salir</button>
+            </div>
 
-            <main id="game-board">
-                </main>
+            <main id="game-board"></main>
         </section>
 
-       <div id="end-screen" class="screen hidden">
+        <div id="end-screen" class="screen hidden">
             <h2>¡Partida Terminada!</h2>
             <p id="end-message"></p> 
             <p id="end-time-result"></p>
-             <button id="restart-btn">Volver al Menú</button>
+            <button id="restart-btn">Volver al Menú</button>
+        </div>
+
     </div>
+    
     <script src="theme.js"></script>
     <script src="board.js"></script>
     <script src="timer.js"></script>

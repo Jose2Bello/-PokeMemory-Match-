@@ -10,6 +10,7 @@ let lockBoard = false;  // Bandera de seguridad para bloquear clics durante anim
 let gameMode = "solo"; // Puede ser 'solo', 'time-attack' o 'pvp'
 let activePlayer = 1;  // Identifica si juega el Jugador 1 o el Jugador 2
 let pvpScores = { player1: 0, player2: 0 }; // Almacena los puntajes de cada jugador en modo PvP
+let playerNames = { player1: "Jugador 1", player2: "Jugador 2" };
 /**
  * Función que se ejecuta cada vez que el usuario hace clic en una carta.
  * @param {HTMLElement} cardElement - El contenedor de la carta cliqueada.
@@ -126,14 +127,14 @@ function endGame(isWin) {
             // Ocultamos el texto del tiempo porque en PvP no importa el reloj
             if (endTimeResult) endTimeResult.classList.add("hidden");
 
-            // Evaluamos quién tiene más parejas guardadas en nuestro estado global
-            if (pvpScores.player1 > pvpScores.player2) {
-                endMessage.innerHTML = `¡Victoria para el <span style="color: #ffcb05;">Jugador 1</span>!<br>Puntaje: ${pvpScores.player1} a ${pvpScores.player2}`;
+                if (pvpScores.player1 > pvpScores.player2) {
+                endMessage.innerHTML = `¡Victoria para <span style="color: #ffcb05;">${playerNames.player1}</span>!<br>Puntaje: ${pvpScores.player1} a ${pvpScores.player2}`;
             } else if (pvpScores.player2 > pvpScores.player1) {
-                endMessage.innerHTML = `¡Victoria para el <span style="color: #ffcb05;">Jugador 2</span>!<br>Puntaje: ${pvpScores.player2} a ${pvpScores.player1}`;
+                endMessage.innerHTML = `¡Victoria para <span style="color: #ffcb05;">${playerNames.player2}</span>!<br>Puntaje: ${pvpScores.player2} a ${pvpScores.player1}`;
             } else {
-                endMessage.innerHTML = `¡Empate técnico!<br>Ambos jugadores consiguieron ${pvpScores.player1} parejas.`;
+                endMessage.innerHTML = `¡Empate técnico!<br>Ambos consiguieron ${pvpScores.player1} parejas.`;
             }
+}
         } else {
             // MODO SOLO: Muestra los mensajes clásicos de tiempo récord o derrota
             if (endTimeResult) endTimeResult.classList.remove("hidden");
@@ -149,13 +150,19 @@ function endGame(isWin) {
             }
         }
     }
-}
 
-function initGameMode(mode) {
+
+function initGameMode(mode, names = null) {
     gameMode = mode;
     activePlayer = 1;
     pvpScores.player1 = 0;
     pvpScores.player2 = 0;
+
+    // Si pasamos nombres desde el menú, los guardamos; si no, dejamos los de por defecto
+    if (names) {
+        playerNames.player1 = names.p1 || "Jugador 1";
+        playerNames.player2 = names.p2 || "Jugador 2";
+    }
 
     const soloHud = document.getElementById("hud-solo-info");
     const pvpInfo = document.getElementById("hud-pvp-info");
@@ -164,7 +171,7 @@ function initGameMode(mode) {
         if (soloHud) soloHud.classList.add("hidden");
         if (pvpInfo) {
             pvpInfo.classList.remove("hidden");
-            updatePvpHUD(); // Refresca los textos de P1 y P2
+            updatePvpHUD(); 
         }
     } else {
         if (soloHud) soloHud.classList.remove("hidden");
@@ -172,15 +179,16 @@ function initGameMode(mode) {
     }
 }
 
+
 function updatePvpHUD() {
     const p1Element = document.getElementById("score-p1");
     const p2Element = document.getElementById("score-p2");
 
     if (p1Element && p2Element) {
-        p1Element.textContent = `P1: ${pvpScores.player1}`;
-        p2Element.textContent = `P2: ${pvpScores.player2}`;
+     
+        p1Element.textContent = `${playerNames.player1}: ${pvpScores.player1}`;
+        p2Element.textContent = `${playerNames.player2}: ${pvpScores.player2}`;
 
-        // Agrega o quita la clase que hace brillar al jugador activo
         if (activePlayer === 1) {
             p1Element.classList.add("player-turn-indicator");
             p2Element.classList.remove("player-turn-indicator");

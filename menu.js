@@ -1,5 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
     const configForm = document.getElementById("game-config");
+    const modeSelect = document.getElementById("config-mode");
+    const pvpNamesContainer = document.getElementById("pvp-names-container");
+
+    // --- CAMBIO 1: Mostrar/Ocultar inputs de nombres según el modo seleccionado ---
+    if (modeSelect && pvpNamesContainer) {
+        modeSelect.addEventListener("change", () => {
+            if (modeSelect.value === "pvp") {
+                pvpNamesContainer.classList.remove("hidden");
+            } else {
+                pvpNamesContainer.classList.add("hidden");
+            }
+        });
+    }
 
     if (configForm) {
         configForm.addEventListener("submit", (event) => {
@@ -19,7 +32,20 @@ document.addEventListener("DOMContentLoaded", () => {
             matchesFound = 0;
             totalPairsNeeded = pairCount; 
 
-            initGameMode(selectedMode);
+            // --- CAMBIO 2: Capturar los nombres de los jugadores si el modo es PvP ---
+            let namesData = null;
+            if (selectedMode === "pvp") {
+                const p1NameInput = document.getElementById("player1-name").value.trim();
+                const p2NameInput = document.getElementById("player2-name").value.trim();
+                
+                namesData = {
+                    p1: p1NameInput || "Jugador 1",
+                    p2: p2NameInput || "Jugador 2"
+                };
+            }
+
+            // --- CAMBIO 3: Pasar el objeto de nombres a la función del juego ---
+            initGameMode(selectedMode, namesData);
 
          
             const gameData = getThemeAssets(selectedTheme, pairCount);
@@ -47,9 +73,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
-// ==========================================================================
-// CONTROL DEL BOTÓN DE SALIR (REGRESAR AL MENÚ)
-// ==========================================================================
 
 document.addEventListener("DOMContentLoaded", () => {
     const exitBtn = document.getElementById("exit-game-btn");
@@ -79,8 +102,8 @@ document.addEventListener("DOMContentLoaded", () => {
             const boardContainer = document.getElementById("game-board");
             if (boardContainer) boardContainer.innerHTML = "";
             
-            // --- ¡SOLUCIÓN 1! RESETEAR EL TEMA AL SALIR A MITAD DE PARTIDA ---
-            document.body.className = ""; 
+           
+            document.body.className = "";  // ESTA ES LA LINEA QUE FALTABA
           
             if (typeof resetTurn === "function") {
                 resetTurn();
@@ -90,9 +113,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// ==========================================================================
-// CONTROL DEL BOTÓN VOLVER AL MENÚ (PANTALLA DE VICTORIA)
-// ==========================================================================
 document.addEventListener("DOMContentLoaded", () => {
     const restartBtn = document.getElementById("restart-btn");
 
@@ -119,7 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const boardContainer = document.getElementById("game-board");
             if (boardContainer) boardContainer.innerHTML = "";
             
-            // --- ¡SOLUCIÓN 2! RESETEAR EL TEMA AL VOLVER DESDE LA VICTORIA ---
+    
             document.body.className = ""; 
 
             if (typeof resetTurn === "function") {
