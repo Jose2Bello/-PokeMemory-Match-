@@ -3,7 +3,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const modeSelect = document.getElementById("config-mode");
     const pvpNamesContainer = document.getElementById("pvp-names-container");
 
-    // --- CAMBIO 1: Mostrar/Ocultar inputs de nombres según el modo seleccionado ---
     if (modeSelect && pvpNamesContainer) {
         modeSelect.addEventListener("change", () => {
             if (modeSelect.value === "pvp") {
@@ -19,7 +18,6 @@ document.addEventListener("DOMContentLoaded", () => {
             
             event.preventDefault();
 
-          
             const selectedTheme = document.getElementById("config-theme").value;
             const selectedDifficulty = document.getElementById("config-difficulty").value;
             const selectedMode = document.getElementById("config-mode").value; 
@@ -28,11 +26,9 @@ document.addEventListener("DOMContentLoaded", () => {
             if (selectedDifficulty === "medium") pairCount = 18;
             if (selectedDifficulty === "hard") pairCount = 32;
 
-          
             matchesFound = 0;
             totalPairsNeeded = pairCount; 
 
-            // --- CAMBIO 2: Capturar los nombres de los jugadores si el modo es PvP ---
             let namesData = null;
             if (selectedMode === "pvp") {
                 const p1NameInput = document.getElementById("player1-name").value.trim();
@@ -44,13 +40,27 @@ document.addEventListener("DOMContentLoaded", () => {
                 };
             }
 
-            // --- CAMBIO 3: Pasar el objeto de nombres a la función del juego ---
             initGameMode(selectedMode, namesData);
 
-         
+            // ==================================================================
+            // 🔥 NUEVA LÓGICA: SELECCIÓN Y REPRODUCCIÓN DINÁMICA DE MÚSICA
+            // ==================================================================
+            // 1. Buscamos la región en nuestra playlist (kanto, hoenn, sinnoh)
+            const themePlaylist = POKE_PLAYLIST[selectedTheme];
+            
+            if (themePlaylist) {
+                // 2. Extraemos la canción exacta según el modo (free, time, pvp)
+                const trackToPlay = themePlaylist[selectedMode];
+                
+                // 3. Si la canción existe en nuestro mapa, la reproducimos
+                if (trackToPlay) {
+                    playTrack(trackToPlay);
+                }
+            }
+            // ==================================================================
+
             const gameData = getThemeAssets(selectedTheme, pairCount);
 
-          
             if (gameData) {
                
                 document.getElementById("main-menu").classList.add("hidden");
@@ -59,13 +69,10 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.body.className = ""; 
                 document.body.classList.add(`theme-${selectedTheme}`); 
                 
-            
                 document.getElementById("hud-region").textContent = `Región: ${selectedTheme.toUpperCase()}`;
 
-               
                 createBoard(gameData.cards, selectedDifficulty, gameData.styles);
                 
-               
                 if (selectedMode !== "pvp") {
                     startTimer(selectedMode, selectedDifficulty);
                 }
@@ -73,6 +80,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 });
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const exitBtn = document.getElementById("exit-game-btn");
@@ -84,11 +92,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 stopTimer();
             }
 
-          
             const timerElement = document.getElementById("hud-timer");
             if (timerElement) timerElement.textContent = "00:00";
 
-        
             document.getElementById("game-screen").classList.add("hidden");
             document.getElementById("main-menu").classList.remove("hidden");
 
@@ -98,20 +104,28 @@ document.addEventListener("DOMContentLoaded", () => {
             if (pvpInfo) pvpInfo.classList.add("hidden");
             if (soloInfo) soloInfo.classList.remove("hidden");
 
-    
             const boardContainer = document.getElementById("game-board");
             if (boardContainer) boardContainer.innerHTML = "";
             
-           
-            document.body.className = "";  // ESTA ES LA LINEA QUE FALTABA
-          
+            document.body.className = "";  
+            
+       
+            document.getElementById("end-message").textContent = "";
+            document.getElementById("end-time-result").textContent = "";
+
             if (typeof resetTurn === "function") {
                 resetTurn();
             }
             matchesFound = 0;
+
+            // Volvemos a poner la música del menú principal
+            if (typeof playTrack === "function") {
+                playTrack(POKE_PLAYLIST.menu);
+            }
         });
     }
 });
+
 
 document.addEventListener("DOMContentLoaded", () => {
     const restartBtn = document.getElementById("restart-btn");
@@ -126,7 +140,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const timerElement = document.getElementById("hud-timer");
             if (timerElement) timerElement.textContent = "00:00";
 
-            // Ocultamos la pantalla de victoria y mostramos el menú principal
             document.getElementById("end-screen").classList.add("hidden");
             document.getElementById("main-menu").classList.remove("hidden");
 
@@ -139,13 +152,27 @@ document.addEventListener("DOMContentLoaded", () => {
             const boardContainer = document.getElementById("game-board");
             if (boardContainer) boardContainer.innerHTML = "";
             
-    
             document.body.className = ""; 
+
+            document.getElementById("end-message").textContent = "";
+            document.getElementById("end-time-result").textContent = "";
 
             if (typeof resetTurn === "function") {
                 resetTurn();
             }
             matchesFound = 0;
+
+            // Volvemos a poner la música del menú principal
+            if (typeof playTrack === "function") {
+                playTrack(POKE_PLAYLIST.menu);
+            }
         });
     }
 });
+
+document.addEventListener("click", () => {
+ 
+    if (!backgroundMusic) {
+        playTrack(POKE_PLAYLIST.menu);
+    }
+}, { once: true });

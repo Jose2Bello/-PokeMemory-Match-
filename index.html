@@ -7,6 +7,13 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div id="audio-controls-global">
+        <button id="btn-mute" type="button" title="Silenciar/Activar sonido">
+            <span id="mute-icon">🔊</span>
+        </button>
+        <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.5">
+    </div>
+
 
   <div id="app-container">
         
@@ -85,7 +92,7 @@
         </div>
 
     </div>
-    
+    <script src="audio.js"></script>
     <script src="theme.js"></script>
     <script src="board.js"></script>
     <script src="timer.js"></script>
