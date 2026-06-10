@@ -54,9 +54,7 @@ const THEMES_CATALOG = {
     }
 };
 
-/**
- * Obtiene el mazo de cartas barajado y configurado para la partida.
- */
+
 function getThemeAssets(themeKey, pairCount) {
     const theme = THEMES_CATALOG[themeKey];
     if (!theme) {

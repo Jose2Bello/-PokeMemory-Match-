@@ -42,10 +42,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             initGameMode(selectedMode, namesData);
 
-            // ==================================================================
-            // 🔥 NUEVA LÓGICA: SELECCIÓN Y REPRODUCCIÓN DINÁMICA DE MÚSICA
-            // ==================================================================
-            // 1. Buscamos la región en nuestra playlist (kanto, hoenn, sinnoh)
+    
             const themePlaylist = POKE_PLAYLIST[selectedTheme];
             
             if (themePlaylist) {
