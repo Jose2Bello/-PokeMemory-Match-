@@ -44,6 +44,38 @@ El código del proyecto está dividido de forma modular según sus responsabilid
 * **Manejador de Botón de Reinicio/Volver (`restart-btn`):** Oculta la pantalla de victoria/derrota (`end-screen`), remueve las interfaces de juego activas, limpia el tablero del DOM y redirige al usuario al menú de configuración restableciendo los contadores de control.
 * **Inicializador de Audio por Interacción (`click` global):** Ejecuta la reproducción inicial de la música del menú principal tras el primer clic del usuario en el documento, burlando de manera segura las restricciones de reproducción automática (*autoplay*) impuestas por los navegadores modernos.
 
+* ### 4. `audio.js` (Sistema de Sonido y Control de Volumen)
+**Responsabilidad:** Administrar la carga, reproducción cíclica e intercambio de bandas sonoras según la región y modo seleccionado, proveyendo un control de volumen interactivo y protección contra las políticas de *autoplay*.
+* `playTrack(audioPath)`: Detiene y reinicia la canción activa, instancia el nuevo objeto de audio en bucle infinito, hereda el nivel del potenciómetro visual y previene excepciones de bloqueo del navegador mediante captura de promesas.
+* **Manejador de Arrastre (`input`):** Sincroniza en tiempo real el volumen del objeto de audio en reproducción con el deslizador y muta dinámicamente el emoji del ícono (`🔊`, `🔈`, `🔇`) basándose en el umbral numérico seleccionado.
+* **Manejador de Silencio Rápido (`click`):** Conmuta el estado de silencio guardando temporalmente la última ganancia utilizada (`previousVolume`) para restaurarla fielmente al salir del modo *mute*.
+
+### 5. `themes.js` (Catálogo de Regiones y Generador de Mazos)
+**Responsabilidad:** Almacenar las configuraciones estéticas de las diferentes generaciones Pokémon y estructurar el arreglo bidimensional de cartas emparejadas y barajadas de forma aleatoria.
+* `getThemeAssets(themeKey, pairCount)`: Valida la existencia de la región en el catálogo, aplica el algoritmo de barajado *Fisher-Yates* a la lista de imágenes originales para garantizar partidas únicas, extrae la cantidad exacta de especímenes requeridos por la dificultad, duplica las referencias para concebir los pares y vuelve a mezclar el mazo final antes de retornar los recursos y las clases de estilo al tablero.
+
+### 6. `timer.js` (Controladores de Tiempo)
+**Responsabilidad:** Gobernar la ejecución del cronómetro interno adaptando el comportamiento de los hilos de tiempo a mecánicas tanto progresivas como regresivas.
+* `startTimer(mode, difficulty)`: Limpia hilos previos y bifurca la lógica: en Modo Libre (`free`) despacha una cuenta ascendente infinita; en Modo Contrarreloj (`time`) calcula el límite restrictivo por dificultad (`60s`, `120s` o `240s`) y activa un temporizador descendente acoplado a la interrupción de derrota `endGame(false)`.
+* `stopTimer()`: Congela el intervalo activo y computa los segundos netos consumidos para su posterior formateo.
+* `formatTime(seconds)`: Transforma valores enteros de segundos a cadenas tipográficas bajo el estándar estricto de doble dígito `MM:SS`.
+
+---
+
+##  Desglose Estructural del `styles.css`
+
+El archivo de hojas de estilo centraliza la identidad gráfica pixelada e interactiva del juego a través de los siguientes bloques clave:
+
+* **Configuración del Body y Tipografía:** Importa y establece la fuente *DotGothic16* con suavizado de pixeles, eliminando márgenes nativos y centrando la aplicación de manera absoluta mediante *Flexbox* y alturas dinámicas (`100vh`).
+* **Potenciómetro de Volumen Personalizado (`#volume-slider`):** Muta el diseño nativo de la barra de desplazamiento, transformando el tirador (*thumb*) en una Pokébola interactiva con gradientes lineales y animaciones de escala al hacer clic o arrastrar.
+* **Maquetación del Tablero (`#game-board`):** Estructura el contenedor principal con sombras de profundidad y establece una deformación en perspectiva 3D (`perspective: 1000px`) obligatoria para los efectos de volteo.
+* **Componentes de Cartas e Interfaz 3D (`.card` y `.card-inner`):** Controla las dimensiones adaptativas por proporción de aspecto (`aspect-ratio: 3/4`) y aplica rotaciones de matriz espacial en el eje Y (`rotateY(180deg)`) con ocultación de caras posteriores (*backface-visibility*) para emular el giro físico de las naipes.
+* **Diseño e Iconografía Pokébola CSS (`.pokeball-css`):** Genera mediante pseudo-elementos (`::before` y `::after`) y gradientes puros la silueta geométrica de una Pokébola en la cara trasera de las cartas, ligada dinámicamente al color temático de la región vía variables CSS (`--theme-color`).
+* **Fondos de Pantalla Regionales (`.theme-*`):** Inyecta las imágenes de mapas pixelados de las rutas clásicas (Viridian Forest, Hoenn Route 110, Sinnoh Route 217) ajustadas a cobertura total del viewport.
+* **Componentes Flotantes y Estante de Logros:** Estiliza el contenedor de notificaciones fijas en pantalla (`#achievement-container`), las animaciones de traslación de los *toasts* flotantes (`slideIn` / `slideOut`) y el contenedor dashed del organizador de medallas del menú principal.
+
+---
+
 
 ## Tecnologías Utilizadas
 
