@@ -142,6 +142,16 @@ function endGame(isWin) {
             if (isWin) {
                 endMessage.textContent = "¡Felicidades! Completaste el tablero.";
                 
+            const currentDifficulty = document.getElementById("config-difficulty")?.value || "easy";
+            
+            if (currentDifficulty === "medium") {
+                unlockAchievement("Superbola de Plata", "Completaste el juego en modo Medio.", "🔵");
+            } else if (currentDifficulty === "hard") {
+                unlockAchievement("Ultra Máster", "¡Increíble! Completaste el tablero en modo Difícil.", "🟡");
+            } else if (currentDifficulty === "easy") {
+                unlockAchievement("Primeros Pasos", "Completaste el juego en modo Fácil.", "🔴");
+            }
+
                 const finalTime = document.getElementById("hud-timer")?.textContent || "00:00";
                 if (endTimeResult) endTimeResult.textContent = `Tiempo total: ${finalTime}`;
             } else {
@@ -197,4 +207,28 @@ function updatePvpHUD() {
             p1Element.classList.remove("player-turn-indicator");
         }
     }
+}
+
+
+window.unlockAchievement = function(title, description, icon = "🏆") {
+    const container = document.getElementById("achievement-container");
+    if (!container) return; // Seguridad en caso de que falte el div
+    
+    const toast = document.createElement("div");
+    toast.classList.add("achievement-toast");
+    
+    toast.innerHTML = `
+        <span style="font-size: 1.5rem;">${icon}</span>
+        <div>
+            <strong style="color: #f6b216; display: block;">¡LOGRO DESBLOQUEADO!</strong>
+            <span style="font-size: 0.9rem;">${title}: ${description}</span>
+        </div>
+    `;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add("fade-out");
+        setTimeout(() => toast.remove(), 500);
+    }, 4000);
 }
