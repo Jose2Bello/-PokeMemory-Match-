@@ -1,5 +1,5 @@
 /* game.js 
-   Responsabilidad: Controlar el estado de la partida, voltear cartas y validar parejas.
+   Responsabilidad: Controlar el estado de la partida, voltear cartas, validar parejas y gestionar logros.
 */
 
 // Variables de estado del juego (Globales para este archivo)
@@ -11,6 +11,7 @@ let gameMode = "solo"; // Puede ser 'solo', 'time-attack' o 'pvp'
 let activePlayer = 1;  // Identifica si juega el Jugador 1 o el Jugador 2
 let pvpScores = { player1: 0, player2: 0 }; // Almacena los puntajes de cada jugador en modo PvP
 let playerNames = { player1: "Jugador 1", player2: "Jugador 2" };
+let moveCount = 0;     // 🆕 Contador global de movimientos para modos solitarios
 
 /**
  * Función que se ejecuta cada vez que el usuario hace clic en una carta.
@@ -31,17 +32,16 @@ function handleCardClick(cardElement) {
     // 4. Si es la primera carta que voltea en este turno, salimos y esperamos la segunda
     if (flippedCards.length === 1) return;
 
-    // 5. Si llegamos aquí, es la segunda carta. Evaluamos de inmediato
+    // 5. Si llegamos aquí, es la segunda carta. Incrementamos movimientos y evaluamos de inmediato
+    if (gameMode !== "pvp") {
+        moveCount++; 
+    }
     checkForMatch();
 }
 
-/**
- * Compara los IDs de las dos cartas actualmente volteadas.
- */
 function checkForMatch() {
     const [card1, card2] = flippedCards;
     
-    // Obtenemos los data-pokemon-id que inyectamos en board.js
     const isMatch = card1.dataset.pokemonId === card2.dataset.pokemonId;
 
     if (isMatch) {
@@ -74,7 +74,7 @@ function disableCards() {
     if (matchesFound === totalPairsNeeded) {
         window.endGame(true);
     } else {
-        resetTurn(); // Limpia el array de cartas volteadas para el siguiente intento
+        resetTurn(); 
     }
 }
 
@@ -103,11 +103,25 @@ function resetTurn() {
 }
 
 // ==========================================================================
-// 🏆 SISTEMA GLOBAL DE LOGROS (TOASTS)
+// 🏆 SISTEMA GLOBAL DE LOGROS (TOASTS Y CONTENEDOR PERSISTENTE)
 // ==========================================================================
 window.unlockAchievement = function(title, description, icon = "🏆") {
+    let savedAchievements = JSON.parse(localStorage.getItem("poke_achievements")) || [];
+    
+    const alreadyUnlocked = savedAchievements.some(ach => ach.title === title);
+
+    // Guardamos en el almacenamiento únicamente si es la primera vez que se gana
+    if (!alreadyUnlocked) {
+        savedAchievements.push({ title, description, icon });
+        localStorage.setItem("poke_achievements", JSON.stringify(savedAchievements));
+        
+        // Refrescamos el estante del menú principal de inmediato si la función existe
+        renderAchievementsShelf();
+    }
+
+    // EL TOAST APARECE SIEMPRE (Sacado de la condicional para asegurar el pop-up visual)
     const container = document.getElementById("achievement-container");
-    if (!container) return; // Seguridad en caso de que falte el div
+    if (!container) return; 
     
     const toast = document.createElement("div");
     toast.classList.add("achievement-toast");
@@ -128,22 +142,67 @@ window.unlockAchievement = function(title, description, icon = "🏆") {
     }, 4000);
 };
 
+function renderAchievementsShelf() {
+    const shelfList = document.getElementById("shelf-list");
+    if (!shelfList) return;
+
+    // Limpiamos el contenedor para no duplicar elementos
+    shelfList.innerHTML = "";
+
+    const savedAchievements = JSON.parse(localStorage.getItem("poke_achievements")) || [];
+
+    if (savedAchievements.length === 0) {
+        shelfList.innerHTML = `<span style="color: #888; font-size: 0.85rem; font-style: italic;">Ningún logro desbloqueado aún. ¡Completa tableros para conseguirlos!</span>`;
+        return;
+    }
+
+    // Renderizado estructurado: Muestra Título Y Descripción fija debajo
+    savedAchievements.forEach(ach => {
+        const badge = document.createElement("div");
+        badge.classList.add("shelf-badge");
+        badge.title = ach.description; 
+        
+        badge.innerHTML = `
+            <span class="badge-icon" style="font-size: 1.4rem;">${ach.icon}</span>
+            <div class="badge-info" style="text-align: left;">
+                <strong class="badge-title" style="color: #ffcb05; display: block; font-size: 0.95rem;">${ach.title}</strong>
+                <span class="badge-desc" style="color: #cccccc; display: block; font-size: 0.75rem; font-style: italic; margin-top: 2px;">${ach.description}</span>
+            </div>
+        `;
+        
+        shelfList.appendChild(badge);
+    });
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    renderAchievementsShelf();
+});
+
 
 window.endGame = function(isWin) {
     const endScreen = document.getElementById("end-screen");
     const endMessage = document.getElementById("end-message");
     const endTimeResult = document.getElementById("end-time-result");
+    const endMovesResult = document.getElementById("end-moves-result");
+    const gameScreen = document.getElementById("game-screen"); 
+    const boardContainer = document.getElementById("board-container"); 
 
     if (!endScreen) return;
 
-    // Detener el cronómetro si existe la función en timer.js
+
     if (typeof stopTimer === "function") {
         stopTimer();
     }
 
+    
+    if (gameScreen) {
+        gameScreen.classList.add("hidden");
+    } else if (boardContainer) {
+        boardContainer.classList.add("hidden");
+    }
+
     if (isWin) {
         if (endMessage) {
-            // Si es PvP indicamos quién ganó basándonos en los puntos acumulados
             if (gameMode === "pvp") {
                 if (pvpScores.player1 > pvpScores.player2) {
                     endMessage.textContent = `¡Victoria para ${playerNames.player1}!`;
@@ -162,29 +221,36 @@ window.endGame = function(isWin) {
         
         if (typeof window.unlockAchievement === "function") {
             if (currentDifficulty === "medium") {
-                window.unlockAchievement("Superbola de Plata", "Completaste el juego en modo Medio.", "🔵");
+                window.unlockAchievement("Super Ball", "Completaste el juego en modo Medio.", "🔵");
             } else if (currentDifficulty === "hard") {
-                window.unlockAchievement("Ultra Máster", "¡Increíble! Completaste el tablero en modo Difícil.", "🟡");
+                window.unlockAchievement("Ultra Ball", "¡Increíble! Completaste el tablero en modo Difícil.", "🟡");
             } else if (currentDifficulty === "easy") {
-                window.unlockAchievement("Primeros Pasos", "Completaste el juego en modo Fácil.", "🔴");
+                window.unlockAchievement("Pokeball", "Completaste el juego en modo Fácil.", "🔴");
             }
         }
 
         const finalTime = document.getElementById("hud-timer")?.textContent || "00:00";
         if (endTimeResult) {
-            // En modo PvP mostramos los marcadores finales, en solitario el tiempo
             if (gameMode === "pvp") {
                 endTimeResult.textContent = `${pvpScores.player1} pts vs ${pvpScores.player2} pts`;
             } else {
                 endTimeResult.textContent = `Tiempo total: ${finalTime}`;
             }
         }
+
+        if (endMovesResult) {
+            if (gameMode !== "pvp") {
+                endMovesResult.textContent = `Movimientos realizados: ${moveCount}`;
+            } else {
+                endMovesResult.textContent = ""; 
+            }
+        }
     } else {
         if (endMessage) endMessage.textContent = "¡Se acabó el tiempo! Inténtalo de nuevo.";
         if (endTimeResult) endTimeResult.textContent = "";
+        if (endMovesResult) endMovesResult.textContent = "";
     }
 
-    // Desocultar tarjeta de resultados
     endScreen.classList.remove("hidden");
 };
 
@@ -196,6 +262,7 @@ function initGameMode(mode, names = null) {
     activePlayer = 1;
     pvpScores.player1 = 0;
     pvpScores.player2 = 0;
+    moveCount = 0; //  Reiniciamos el contador cada vez que empieza una partida limpia
 
     // Si pasamos nombres desde el menú, los guardamos; si no, dejamos los de por defecto
     if (names) {

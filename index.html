@@ -7,6 +7,7 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
+    <div id="achievement-container"></div>
     <div id="audio-controls-global">
         <button id="btn-mute" type="button" title="Silenciar/Activar sonido">
             <span id="mute-icon">🔊</span>
@@ -62,6 +63,11 @@
                 </div>
 
                 <button type="submit" id="btn-start">Iniciar Juego</button>
+                <div id="achievements-shelf">
+                <h3>Tus Logros Obtenidos</h3>
+                <div id="shelf-list">
+                </div>
+                </div>
                 <footer class="game-footer">
                 <p>Desarrollado por <strong>José Bello y Santiago Salas</strong> &copy; 2026</p>
                 <p class="disclaimer">
@@ -100,7 +106,7 @@
 
     </div>
 
-    <div id="achievement-container"></div>
+  
     
     <script src="audio.js"></script>
     <script src="theme.js"></script>
