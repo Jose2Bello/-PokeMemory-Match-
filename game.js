@@ -11,6 +11,7 @@ let gameMode = "solo"; // Puede ser 'solo', 'time-attack' o 'pvp'
 let activePlayer = 1;  // Identifica si juega el Jugador 1 o el Jugador 2
 let pvpScores = { player1: 0, player2: 0 }; // Almacena los puntajes de cada jugador en modo PvP
 let playerNames = { player1: "Jugador 1", player2: "Jugador 2" };
+
 /**
  * Función que se ejecuta cada vez que el usuario hace clic en una carta.
  * @param {HTMLElement} cardElement - El contenedor de la carta cliqueada.
@@ -71,7 +72,7 @@ function disableCards() {
     }
 
     if (matchesFound === totalPairsNeeded) {
-        endGame(true);
+        window.endGame(true);
     } else {
         resetTurn(); // Limpia el array de cartas volteadas para el siguiente intento
     }
@@ -96,72 +97,100 @@ function unflipCards() {
     }, 1000);
 }
 
-
 function resetTurn() {
     flippedCards = [];
     lockBoard = false;
 }
 
+// ==========================================================================
+// 🏆 SISTEMA GLOBAL DE LOGROS (TOASTS)
+// ==========================================================================
+window.unlockAchievement = function(title, description, icon = "🏆") {
+    const container = document.getElementById("achievement-container");
+    if (!container) return; // Seguridad en caso de que falte el div
+    
+    const toast = document.createElement("div");
+    toast.classList.add("achievement-toast");
+    
+    toast.innerHTML = `
+        <span style="font-size: 1.5rem;">${icon}</span>
+        <div>
+            <strong style="color: #f6b216; display: block;">¡LOGRO DESBLOQUEADO!</strong>
+            <span style="font-size: 0.9rem;">${title}: ${description}</span>
+        </div>
+    `;
+    
+    container.appendChild(toast);
+    
+    setTimeout(() => {
+        toast.classList.add("fade-out");
+        setTimeout(() => toast.remove(), 500);
+    }, 4000);
+};
 
-/**
- * @param {boolean} isWin
- * @param {string} finalTime
- * 
- */
-function endGame(isWin) {
-    // 1. Detenemos los relojes por si acaso estábamos en modo Solo/Time Attack
-    if (typeof stopTimer === "function") {
-        stopTimer();
-    }
 
-    const gameScreen = document.getElementById("game-screen");
+window.endGame = function(isWin) {
     const endScreen = document.getElementById("end-screen");
     const endMessage = document.getElementById("end-message");
     const endTimeResult = document.getElementById("end-time-result");
 
-    if (gameScreen && endScreen) {
-        gameScreen.classList.add("hidden");
-        endScreen.classList.remove("hidden");
+    if (!endScreen) return;
 
-        if (gameMode === "pvp") {
-            // Ocultamos el texto del tiempo porque en PvP no importa el reloj
-            if (endTimeResult) endTimeResult.classList.add("hidden");
-
-                if (pvpScores.player1 > pvpScores.player2) {
-                endMessage.innerHTML = `¡Victoria para <span style="color: #ffcb05;">${playerNames.player1}</span>!<br>Puntaje: ${pvpScores.player1} a ${pvpScores.player2}`;
-            } else if (pvpScores.player2 > pvpScores.player1) {
-                endMessage.innerHTML = `¡Victoria para <span style="color: #ffcb05;">${playerNames.player2}</span>!<br>Puntaje: ${pvpScores.player2} a ${pvpScores.player1}`;
-            } else {
-                endMessage.innerHTML = `¡Empate técnico!<br>Ambos consiguieron ${pvpScores.player1} parejas.`;
-            }
-}
-        } else {
-            // MODO SOLO: Muestra los mensajes clásicos de tiempo récord o derrota
-            if (endTimeResult) endTimeResult.classList.remove("hidden");
-            
-            if (isWin) {
-                endMessage.textContent = "¡Felicidades! Completaste el tablero.";
-                
-            const currentDifficulty = document.getElementById("config-difficulty")?.value || "easy";
-            
-            if (currentDifficulty === "medium") {
-                unlockAchievement("Superbola de Plata", "Completaste el juego en modo Medio.", "🔵");
-            } else if (currentDifficulty === "hard") {
-                unlockAchievement("Ultra Máster", "¡Increíble! Completaste el tablero en modo Difícil.", "🟡");
-            } else if (currentDifficulty === "easy") {
-                unlockAchievement("Primeros Pasos", "Completaste el juego en modo Fácil.", "🔴");
-            }
-
-                const finalTime = document.getElementById("hud-timer")?.textContent || "00:00";
-                if (endTimeResult) endTimeResult.textContent = `Tiempo total: ${finalTime}`;
-            } else {
-                endMessage.textContent = "¡Se agotó el tiempo! Inténtalo de nuevo.";
-                if (endTimeResult) endTimeResult.textContent = "";
-            }
-        }
+    // Detener el cronómetro si existe la función en timer.js
+    if (typeof stopTimer === "function") {
+        stopTimer();
     }
 
+    if (isWin) {
+        if (endMessage) {
+            // Si es PvP indicamos quién ganó basándonos en los puntos acumulados
+            if (gameMode === "pvp") {
+                if (pvpScores.player1 > pvpScores.player2) {
+                    endMessage.textContent = `¡Victoria para ${playerNames.player1}!`;
+                } else if (pvpScores.player2 > pvpScores.player1) {
+                    endMessage.textContent = `¡Victoria para ${playerNames.player2}!`;
+                } else {
+                    endMessage.textContent = "¡Empate técnico!";
+                }
+            } else {
+                endMessage.textContent = "¡Felicidades! Completaste el tablero.";
+            }
+        }
+        
+        // Ejecución y validación de logros según la dificultad seleccionada
+        const currentDifficulty = document.getElementById("config-difficulty")?.value || "easy";
+        
+        if (typeof window.unlockAchievement === "function") {
+            if (currentDifficulty === "medium") {
+                window.unlockAchievement("Superbola de Plata", "Completaste el juego en modo Medio.", "🔵");
+            } else if (currentDifficulty === "hard") {
+                window.unlockAchievement("Ultra Máster", "¡Increíble! Completaste el tablero en modo Difícil.", "🟡");
+            } else if (currentDifficulty === "easy") {
+                window.unlockAchievement("Primeros Pasos", "Completaste el juego en modo Fácil.", "🔴");
+            }
+        }
 
+        const finalTime = document.getElementById("hud-timer")?.textContent || "00:00";
+        if (endTimeResult) {
+            // En modo PvP mostramos los marcadores finales, en solitario el tiempo
+            if (gameMode === "pvp") {
+                endTimeResult.textContent = `${pvpScores.player1} pts vs ${pvpScores.player2} pts`;
+            } else {
+                endTimeResult.textContent = `Tiempo total: ${finalTime}`;
+            }
+        }
+    } else {
+        if (endMessage) endMessage.textContent = "¡Se acabó el tiempo! Inténtalo de nuevo.";
+        if (endTimeResult) endTimeResult.textContent = "";
+    }
+
+    // Desocultar tarjeta de resultados
+    endScreen.classList.remove("hidden");
+};
+
+// ==========================================================================
+// CONFIGURACIÓN DE TURNOS E INTERFAZ HUD
+// ==========================================================================
 function initGameMode(mode, names = null) {
     gameMode = mode;
     activePlayer = 1;
@@ -189,13 +218,11 @@ function initGameMode(mode, names = null) {
     }
 }
 
-
 function updatePvpHUD() {
     const p1Element = document.getElementById("score-p1");
     const p2Element = document.getElementById("score-p2");
 
     if (p1Element && p2Element) {
-     
         p1Element.textContent = `${playerNames.player1}: ${pvpScores.player1}`;
         p2Element.textContent = `${playerNames.player2}: ${pvpScores.player2}`;
 
@@ -207,28 +234,4 @@ function updatePvpHUD() {
             p1Element.classList.remove("player-turn-indicator");
         }
     }
-}
-
-
-window.unlockAchievement = function(title, description, icon = "🏆") {
-    const container = document.getElementById("achievement-container");
-    if (!container) return; // Seguridad en caso de que falte el div
-    
-    const toast = document.createElement("div");
-    toast.classList.add("achievement-toast");
-    
-    toast.innerHTML = `
-        <span style="font-size: 1.5rem;">${icon}</span>
-        <div>
-            <strong style="color: #f6b216; display: block;">¡LOGRO DESBLOQUEADO!</strong>
-            <span style="font-size: 0.9rem;">${title}: ${description}</span>
-        </div>
-    `;
-    
-    container.appendChild(toast);
-    
-    setTimeout(() => {
-        toast.classList.add("fade-out");
-        setTimeout(() => toast.remove(), 500);
-    }, 4000);
 }
