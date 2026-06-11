@@ -139,6 +139,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             document.getElementById("end-screen").classList.add("hidden");
             document.getElementById("main-menu").classList.remove("hidden");
+            document.getElementById("game-screen").classList.add("hidden");
 
             const pvpInfo = document.getElementById("hud-pvp-info");
             const soloInfo = document.getElementById("hud-solo-info");
