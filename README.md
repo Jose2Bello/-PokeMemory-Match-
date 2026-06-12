@@ -125,3 +125,6 @@ Si necesitas resetear por completo el sistema de medallas guardadas para realiza
 ---
 💻 Desarrollado con dedicación por **José Bello** y **Santiago Salas** © 2026.  
 *Pokémon es una marca registrada de Nintendo, Creatures Inc. y Game Freak.*
+
+
+<img width="1200" height="933" alt="image" src="https://github.com/user-attachments/assets/c7965f07-6afb-4038-9613-9b6cb2e52a16" />
