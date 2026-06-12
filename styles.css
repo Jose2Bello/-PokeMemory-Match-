@@ -5,12 +5,19 @@ body {
     font-family: 'DotGothic16', sans-serif;
     font-size: 1.1rem;
     letter-spacing: 0.5px;
-    background-color: #1e1e24;
     color: #ffffff;
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
+    background-image:
+    linear-gradient(rgba(20, 20, 25, 0.75), rgba(20, 20, 25, 0.85)), 
+        url('assets/9889becb560835a3d47574202935f737.jpg');
+        
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
 }
 
 #audio-controls-global {
@@ -137,7 +144,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 15px;
-    background: rgba(255, 255, 255, 0.05);
+    background-color: #232328;
     padding: 20px;
     border-radius: 8px;
 }
