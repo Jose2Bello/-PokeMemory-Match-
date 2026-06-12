@@ -220,15 +220,26 @@ window.endGame = function(isWin) {
         const currentDifficulty = document.getElementById("config-difficulty")?.value || "easy";
         
         if (typeof window.unlockAchievement === "function") {
-            if (currentDifficulty === "medium") {
-                window.unlockAchievement("Super Ball", "Completaste el juego en modo Medio.", "🔵");
-            } else if (currentDifficulty === "hard") {
-                window.unlockAchievement("Ultra Ball", "¡Increíble! Completaste el tablero en modo Difícil.", "🟡");
-            } else if (currentDifficulty === "easy") {
-                window.unlockAchievement("Pokeball", "Completaste el juego en modo Fácil.", "🔴");
+            if (gameMode === "time") {
+                // --- NUEVOS LOGROS CONTRARRELOJ ---
+                if (currentDifficulty === "easy") {
+                    window.unlockAchievement("Quick Ball", "Completaste el Contrarreloj en modo Fácil.", "⏳");
+                } else if (currentDifficulty === "medium") {
+                    window.unlockAchievement("Velocidad Extrema", "¡Superaste el Contrarreloj en modo Intermedio!", "⚡");
+                } else if (currentDifficulty === "hard") {
+                    window.unlockAchievement("Quick Attack", "¡Nivel Dios! Dominaste el Contrarreloj en modo Difícil.", "🟢");
+                }
+            } else {
+                // --- TUS LOGROS ORIGINALES (MODO LIBRE) ---
+                if (currentDifficulty === "medium") {
+                    window.unlockAchievement("Super Ball", "Completaste el juego en modo Medio.", "🔵");
+                } else if (currentDifficulty === "hard") {
+                    window.unlockAchievement("Ultra Ball", "¡Increíble! Completaste el tablero en modo Difícil.", "🟡");
+                } else if (currentDifficulty === "easy") {
+                    window.unlockAchievement("Pokeball", "Completaste el juego en modo Fácil.", "🔴");
+                }
             }
         }
-
         const finalTime = document.getElementById("hud-timer")?.textContent || "00:00";
         if (endTimeResult) {
             if (gameMode === "pvp") {
