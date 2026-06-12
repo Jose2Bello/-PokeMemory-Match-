@@ -60,6 +60,32 @@ El código del proyecto está dividido de forma modular según sus responsabilid
 * `stopTimer()`: Congela el intervalo activo y computa los segundos netos consumidos para su posterior formateo.
 * `formatTime(seconds)`: Transforma valores enteros de segundos a cadenas tipográficas bajo el estándar estricto de doble dígito `MM:SS`.
 
+* ## 🏆 Sistema de Logros
+
+El juego cuenta con un sistema de medallas dinámicas que recompensa el rendimiento del jugador según las mecánicas y dificultades superadas. Al concluir una partida con éxito, la lógica del sistema evalúa las variables de entorno para desbloquear insignias exclusivas. 
+
+* **Modo Contrarreloj (Time-Attack):** Premia la agilidad mental bajo presión otorgando las medallas:
+    * `Quick Ball` ⏳ — Completar el contrarreloj en modo Fácil.
+    * `Velocidad Extrema` ⚡ — Superar el contrarreloj en modo Intermedio.
+    * `Quick Attack` 🟢 — Dominar el contrarreloj en modo Difícil.
+* **Modo Libre (Solo):** Recompensa la constancia y la memoria espacial detallada con las insignias:
+    * `Pokeball` 🔴 — Completar el juego en modo Fácil.
+    * `Super Ball` 🔵 — Completar el juego en modo Medio.
+    * `Ultra Ball` 🟡 — Increíble! Completar el tablero en modo Difícil.
+
+Cada logro obtenido dispara un *toast* animado en la interfaz de partida y se almacena permanentemente en el estante de medallas del menú principal mediante persistencia local (`localStorage`).
+
+---
+
+## 👥 Distribución y Carga de Trabajo del Equipo
+
+Para garantizar el correcto desarrollo, orden y modularidad del proyecto, las responsabilidades se dividieron equitativamente entre los integrantes del equipo, separando el diseño del ecosistema visual de la arquitectura lógica interna:
+
+| Integrante | Rol Principal | Componentes y Responsabilidades Desarrolladas |
+| :--- | :--- | :--- |
+| **Santiago Salas** | Diseñador Web & Desarrollador Front-End | Maquetación y estructura del tablero de juego (`board`), diseño e ilustración del lomo de las cartas con CSS puro, selección de assets de Pokémon y fondos temáticos regionales, maquetación de pantallas de menús y botones interactivos, diseño visual del estante de logros y arquitectura del diseño retro general en el archivo `styles.css`. |
+| **José Bello** | Arquitecto de Software & Desarrollador Back-End | Implementación de la lógica central de estados de partida, turnos y validaciones (`game`), gestión de flujos de navegación e inicialización del menú de configuración, lógica de catálogo y mezcla aleatoria de mazo por regiones (`themes`), control del motor de tiempo progresivo/regresivo (`timer`), e integración del sistema global de audio y volumen (`audio`). |
+
 ---
 
 ##  Desglose Estructural del `styles.css`
