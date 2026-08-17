@@ -1,5 +1,23 @@
 @import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
 
+:root {
+    /* Controles de audio */
+    --audio-offset: 15px;
+    --audio-gap: 4px;
+    --audio-padding: 6px 10px;
+    --audio-pill-height: 40px;
+    --audio-extra-gap: 12px;
+
+    /* Panel desplegable de volumen */
+    --volume-panel-gap: 8px;
+    --volume-panel-padding-x: 14px;
+    --volume-panel-padding-y: 12px;
+    --volume-slider-width: 160px;
+
+    /* Footer */
+    --footer-height: 64px;
+}
+
 body {
     margin: 0;
     font-family: 'DotGothic16', sans-serif;
@@ -22,24 +40,47 @@ body {
 
 #audio-controls-global {
     position: fixed;
-    top: 15px;
-    left: 15px;
+    top: var(--audio-offset);
+    right: var(--audio-offset);
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: var(--audio-gap);
     background: rgba(0, 0, 0, 0.8);
-    padding: 8px 16px;
+    padding: var(--audio-padding);
     border-radius: 30px;
     border: 2px solid #ffcb05;
     z-index: 9999;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
 }
 
+/* --- PANEL DESPLEGABLE DE VOLUMEN --- */
+.volume-panel {
+    position: absolute;
+    top: calc(100% + var(--volume-panel-gap));
+    right: 0;
+    background: rgba(0, 0, 0, 0.9);
+    border: 2px solid #ffcb05;
+    border-radius: 14px;
+    padding: 0 var(--volume-panel-padding-x);
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.6);
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+}
+
+.volume-panel.open {
+    max-height: 120px;
+    padding: var(--volume-panel-padding-y) var(--volume-panel-padding-x);
+    opacity: 1;
+    pointer-events: auto;
+}
 
 #volume-slider {
     -webkit-appearance: none;
     appearance: none;
-    width: 90px;
+    width: var(--volume-slider-width);
     height: 6px; 
     background: #232323; 
     border-radius: 3px;
@@ -114,16 +155,35 @@ body {
     cursor: pointer;
     transition: transform 0.2s ease;
     user-select: none;
+    padding: 2px;
+    line-height: 1;
 }
 
 #btn-mute:hover {
     transform: scale(1.1);
 }
 
+#btn-volume-toggle {
+    background: none;
+    border: none;
+    font-size: 12px;
+    color: #ffcb05;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    user-select: none;
+    padding: 2px;
+    line-height: 1;
+}
+
+#btn-volume-toggle:hover {
+    transform: scale(1.15);
+}
+
 #app-container {
     width: 95vw;
     max-width: 500px; 
     padding: 20px;
+    padding-bottom: var(--footer-height);
     box-sizing: border-box;
 }
 
@@ -157,10 +217,70 @@ body {
 
 select, button {
     font-family: 'DotGothic16', sans-serif !important;
-    padding: 8px;            
     font-size: 1.1rem;
     letter-spacing: 0.5px;
     border: none;
+}
+
+.form-group label {
+    color: #ffcb05;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    font-weight: bold;
+}
+
+/* --- SELECTORES ESTILO MENÚ POKÉ --- */
+#game-config select {
+    width: 100%;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+    appearance: none;
+    background-color: #1e1e28;
+    background-image: url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23ffcb05' d='M1.4 0l4.6 4.6L10.6 0 12 1.4 6 7.4 0 1.4z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+    padding: 12px 38px 12px 12px;
+    color: #ffffff;
+    border: 2px solid #3b4cca;
+    border-radius: 10px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#game-config select:hover {
+    border-color: #ffcb05;
+}
+
+#game-config select:focus {
+    outline: none;
+    border-color: #ffcb05;
+    box-shadow: 0 0 0 3px rgba(255, 203, 5, 0.25);
+}
+
+#game-config select option {
+    background-color: #1e1e28;
+    color: #ffffff;
+}
+
+#game-config input[type="text"] {
+    width: 100%;
+    box-sizing: border-box;
+    background-color: #1e1e28;
+    color: #ffffff;
+    border: 2px solid #3b4cca;
+    border-radius: 10px;
+    padding: 12px;
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 1rem;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+#game-config input[type="text"]:focus {
+    border-color: #ffcb05;
+    box-shadow: 0 0 0 3px rgba(255, 203, 5, 0.25);
 }
 
 button {
@@ -169,6 +289,7 @@ button {
     font-weight: bold;
     cursor: pointer;
     transition: background 0.2s;
+    padding: 12px 20px;
 }
 
 button:hover {
@@ -225,15 +346,23 @@ button:hover {
 }
 
 .game-footer {
-    margin-top: 40px; 
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     width: 100%;
-    max-width: 600px;
+    min-height: var(--footer-height);
+    box-sizing: border-box;
     text-align: center;
     font-family: inherit;
     color: #ffffff;
-    opacity: 0.7; 
+    opacity: 0.7;
     font-size: 14px;
     line-height: 1.5;
+    padding: 12px 10px;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+    pointer-events: none;
+    z-index: 999;
 }
 
 .game-footer strong {
@@ -507,18 +636,11 @@ button:hover {
 
 /* --- MÓVIL: el control de volumen no debe tapar el logo --- */
 @media (max-width: 600px) {
-    #audio-controls-global {
-        top: 10px;
-        left: 10px;
-        gap: 8px;
-        padding: 6px 12px;
-    }
-
-    #volume-slider {
-        width: 70px;
+    :root {
+        --audio-offset: 10px;
     }
 
     #app-container {
-        padding-top: 76px;
+        padding-top: calc(var(--audio-offset) + var(--audio-pill-height) + var(--audio-extra-gap));
     }
 }

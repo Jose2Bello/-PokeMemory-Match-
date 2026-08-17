@@ -1,9 +1,10 @@
-const CACHE_VERSION = 'pokememory-v1';
+const CACHE_VERSION = 'pokememory-v4';
 const APP_SHELL = [
     './',
     './index.html',
     './styles.css',
     './audio.js',
+    './footer.js',
     './theme.js',
     './board.js',
     './timer.js',
@@ -32,28 +33,45 @@ self.addEventListener('activate', (event) => {
     );
 });
 
+async function networkFirst(request, fallbackUrl) {
+    const cache = await caches.open(CACHE_VERSION);
+    try {
+        const response = await fetch(request);
+        if (response && response.ok && (response.type === 'basic' || response.type === 'cors')) {
+            cache.put(request, response.clone());
+        }
+        return response;
+    } catch (error) {
+        const cached = await cache.match(request);
+        return cached || cache.match(fallbackUrl);
+    }
+}
+
+async function cacheFirst(request) {
+    const cache = await caches.open(CACHE_VERSION);
+    const cached = await cache.match(request);
+    if (cached) return cached;
+
+    try {
+        const response = await fetch(request);
+        if (response && response.ok && (response.type === 'basic' || response.type === 'cors')) {
+            cache.put(request, response.clone());
+        }
+        return response;
+    } catch (error) {
+        return cache.match('./icons/icon-192.png');
+    }
+}
+
 self.addEventListener('fetch', (event) => {
     const { request } = event;
     if (request.method !== 'GET') return;
 
-    event.respondWith(
-        caches.match(request).then((cached) => {
-            if (cached) return cached;
-
-            return fetch(request)
-                .then((response) => {
-                    if (response && response.status === 200 && (response.type === 'basic' || response.type === 'cors')) {
-                        const clone = response.clone();
-                        caches.open(CACHE_VERSION).then((cache) => cache.put(request, clone));
-                    }
-                    return response;
-                })
-                .catch(() => {
-                    if (request.mode === 'navigate') {
-                        return caches.match('./index.html');
-                    }
-                    return caches.match('./icons/icon-192.png');
-                });
-        })
-    );
+    if (request.mode === 'navigate') {
+        event.respondWith(networkFirst(request, './index.html'));
+    } else {
+        const url = new URL(request.url);
+        const isCode = url.pathname.endsWith('.css') || url.pathname.endsWith('.js');
+        event.respondWith(isCode ? networkFirst(request, './index.html') : cacheFirst(request));
+    }
 });

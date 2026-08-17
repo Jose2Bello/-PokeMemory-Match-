@@ -21,7 +21,6 @@ const POKE_PLAYLIST = {
 };
 
 /**
-
  * @param {string} audioPath - La ruta del archivo .mp3 a reproducir
  */
 function playTrack(audioPath) {
@@ -32,9 +31,8 @@ function playTrack(audioPath) {
 
     backgroundMusic = new Audio(audioPath);
     backgroundMusic.loop = true;
-    
+
     // Lee el valor actual del slider para que la nueva canción no empiece a tope
-    
     const volumeSlider = document.getElementById("volume-slider");
     if (volumeSlider) {
         backgroundMusic.volume = parseFloat(volumeSlider.value);
@@ -47,24 +45,52 @@ function playTrack(audioPath) {
     });
 }
 
-let previousVolume = 0.5; 
+/**
+ * Componente de control de audio (mute + volumen desplegable).
+ * Renderiza la UI dentro del contenedor indicado y conecta su lógica.
+ * @param {HTMLElement} container - Elemento donde se monta el control.
+ */
+function createAudioControls(container) {
+    if (!container) return null;
 
-document.addEventListener("DOMContentLoaded", () => {
+    container.innerHTML = `
+        <div id="audio-controls-global">
+            <button id="btn-mute" type="button" title="Silenciar/Activar sonido">
+                <span id="mute-icon">🔊</span>
+            </button>
+            <button id="btn-volume-toggle" type="button" title="Ajustar volumen" aria-expanded="false">
+                <span id="volume-toggle-icon">▾</span>
+            </button>
+            <div id="volume-panel" class="volume-panel">
+                <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.5" aria-label="Volumen">
+            </div>
+        </div>
+    `;
+
     const volumeSlider = document.getElementById("volume-slider");
     const btnMute = document.getElementById("btn-mute");
     const muteIcon = document.getElementById("mute-icon");
+    const btnVolumeToggle = document.getElementById("btn-volume-toggle");
+    const volumePanel = document.getElementById("volume-panel");
+    let previousVolume = 0.5;
+
+    if (btnVolumeToggle && volumePanel) {
+        btnVolumeToggle.addEventListener("click", () => {
+            const isOpen = volumePanel.classList.toggle("open");
+            btnVolumeToggle.setAttribute("aria-expanded", String(isOpen));
+            const toggleIcon = document.getElementById("volume-toggle-icon");
+            if (toggleIcon) toggleIcon.textContent = isOpen ? "▴" : "▾";
+        });
+    }
 
     if (volumeSlider) {
-        // Escucha cuando el usuario arrastra la barra de volumen
         volumeSlider.addEventListener("input", (e) => {
             const currentVolume = parseFloat(e.target.value);
-            
-            // Actualizamos el volumen del objeto de audio si está sonando
+
             if (backgroundMusic) {
                 backgroundMusic.volume = currentVolume;
             }
 
-            // Cambiamos dinámicamente el ícono según el nivel
             if (currentVolume === 0) {
                 muteIcon.textContent = "🔇";
             } else if (currentVolume < 0.4) {
@@ -76,17 +102,14 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     if (btnMute && volumeSlider && muteIcon) {
-        // Escucha el clic en el botón de Mute rápido
         btnMute.addEventListener("click", () => {
             if (backgroundMusic) {
                 if (backgroundMusic.volume > 0) {
-                    // Si hay sonido, guardamos el actual y silenciamos
                     previousVolume = backgroundMusic.volume;
                     backgroundMusic.volume = 0;
                     volumeSlider.value = 0;
                     muteIcon.textContent = "🔇";
                 } else {
-                 
                     backgroundMusic.volume = previousVolume > 0 ? previousVolume : 0.5;
                     volumeSlider.value = backgroundMusic.volume;
                     muteIcon.textContent = backgroundMusic.volume < 0.4 ? "🔈" : "🔊";
@@ -103,4 +126,11 @@ document.addEventListener("DOMContentLoaded", () => {
             }
         });
     }
+
+    return container;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+    const root = document.getElementById("audio-controls-root");
+    if (root) createAudioControls(root);
 });
