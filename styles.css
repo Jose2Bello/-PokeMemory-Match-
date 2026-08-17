@@ -1,0 +1,524 @@
+@import url('https://fonts.googleapis.com/css2?family=DotGothic16&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'DotGothic16', sans-serif;
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    color: #ffffff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background-image:
+    linear-gradient(rgba(20, 20, 25, 0.75), rgba(20, 20, 25, 0.85)), 
+        url('assets/9889becb560835a3d47574202935f737.jpg');
+        
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+#audio-controls-global {
+    position: fixed;
+    top: 15px;
+    left: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 8px 16px;
+    border-radius: 30px;
+    border: 2px solid #ffcb05;
+    z-index: 9999;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+}
+
+
+#volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 90px;
+    height: 6px; 
+    background: #232323; 
+    border-radius: 3px;
+    outline: none;
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+
+#volume-slider::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 14px;
+    height: 14px;
+    background-color: #ffffff;
+    border: 3px solid #232323;
+    border-radius: 50%;
+    box-sizing: border-box;
+    z-index: 1;
+    pointer-events: none; /* Permite que el mouse haga click a través de él */
+}
+
+/* --- EL TIRADOR (THUMB) ESTILO POKEBOLA PARA CHROME, EDGE, SAFARI Y BRAVE --- */
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+
+    background: linear-gradient(to bottom, #ff1c1c 48%, #232323 48%, #232323 52%, #ffffff 52%);
+    border: 2px solid #232323;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    cursor: grab;
+    z-index: 2;
+    position: relative;
+    transition: transform 0.1s ease;
+}
+
+#volume-slider::-webkit-slider-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.15); 
+}
+
+
+#volume-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(to bottom, #ff1c1c 48%, #232323 48%, #232323 52%, #ffffff 52%);
+    border: 2px solid #232323;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    cursor: grab;
+    z-index: 2;
+}
+
+#volume-slider::-moz-range-thumb:active {
+    cursor: grabbing;
+    transform: scale(1.15);
+}
+
+
+#btn-mute {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+    user-select: none;
+}
+
+#btn-mute:hover {
+    transform: scale(1.1);
+}
+
+#app-container {
+    width: 95vw;
+    max-width: 500px; 
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+
+.screen {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+
+#game-config {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    background-color: #232328;
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+select, button {
+    font-family: 'DotGothic16', sans-serif !important;
+    padding: 8px;            
+    font-size: 1.1rem;
+    letter-spacing: 0.5px;
+    border: none;
+}
+
+button {
+    background-color: #ffcb05;
+    color: #3b4cca;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+button:hover {
+    background-color: #e2b403;
+}
+
+#hud-pvp-info {
+    display: flex;
+    gap: 20px;
+    font-weight: bold;
+}
+
+#pvp-names-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px; 
+    margin-top: 15px;
+}
+
+#pvp-names-container.hidden {
+    display: none; /* Asegura que desaparezca por completo si está oculto */
+}
+
+
+.player-turn-indicator {
+    color: #ffcb05;
+    text-shadow: 0 0 8px rgba(255, 203, 5, 0.7);
+    border-bottom: 2px solid #ffcb05;
+    padding-bottom: 2px;
+    transition: all 0.3s ease-in-out; 
+}
+
+
+#game-hud {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 15px; 
+    background: rgba(0,0,0,0.3);
+    border-radius: 8px;
+    font-size: 1.1rem;
+}
+#game-board {
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+    perspective: 1000px;
+    
+    display: grid !important;
+    width: 100%;
+    max-height: 80vh; 
+}
+
+.game-footer {
+    margin-top: 40px; 
+    width: 100%;
+    max-width: 600px;
+    text-align: center;
+    font-family: inherit;
+    color: #ffffff;
+    opacity: 0.7; 
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.game-footer strong {
+    color: #ffcb05; 
+}
+
+.game-footer .disclaimer {
+    font-size: 11px;
+    margin-top: 8px;
+    color: #cccccc;
+    font-style: italic;
+    padding: 0 10px;
+}
+
+#end-screen {
+    background-color: rgba(0, 0, 0, 0.85); 
+    border: 3px solid #ffcb05; 
+    border-radius: 15px;
+    padding: 30px 40px;
+    max-width: 500px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.6);
+    
+
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+
+#end-screen h2 {
+    color: #ffffff;
+    margin: 0 0 10px 0;
+    font-size: 28px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#end-screen p {
+    color: #ffffff;
+    font-size: 18px;
+    margin: 5px 0;
+}
+
+.card {
+    width: 100%;
+    height: 100%;
+    aspect-ratio: 3 / 4; 
+    cursor: pointer;
+    background-color: transparent;
+    box-sizing: border-box;
+    min-height: 0; 
+}
+
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner {
+    transform: rotateY(180deg);
+}
+
+.card-front, .card-back {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 2px solid #ffffff;
+    box-sizing: border-box;
+}
+
+.card-back {
+    font-size: 1.5rem;
+    user-select: none;
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
+}
+
+.card-front {
+    background-color: #f8f9fa;
+    transform: rotateY(180deg);
+}
+
+.card-front img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.logo-container {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 0 25px 0;
+    box-sizing: border-box;
+}
+
+#game-logo {
+    width: 90%;          
+    max-width: 480px;      
+    height: auto;       
+    object-fit: contain;   
+    filter: drop-shadow(0px 6px 10px rgba(0, 0, 0, 0.35)); 
+    
+    user-select: none;    
+}
+
+.pokeball-css {
+  position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(to bottom, var(--theme-color, #ff1c1c) 50%, #ffffff 50%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.pokeball-css::before {
+    content: "";
+    position: absolute;
+    width: 100%;
+    height: 8px; /* Grosor de la línea central */
+    background-color: #232323;
+}
+
+.pokeball-css::after {
+    content: "";
+    position: absolute;
+    width: 35px;  /* Tamaño del botón, se ajusta al centro */
+    height: 35px;
+    background-color: #ffffff;
+    border: 8px solid #232323;
+    border-radius: 50%;
+    box-sizing: border-box;
+    z-index: 2;
+}
+
+.theme-kanto {
+    background-image: url('assets/800px-Viridian_Forest_HGSS.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.theme-hoenn {
+    background-image: url('assets/Hoenn_Route_110_E.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.theme-sinnoh {
+    background-image: url('assets/320px-Sinnoh_Route_217_Pt.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+#achievement-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999; 
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.achievement-toast {
+    font-family: 'DotGothic16', sans-serif;
+    background-color: rgba(33, 33, 33, 0.9);
+    color: #ffffff;
+    border: 3px solid #f6b216; 
+    padding: 12px 20px;
+    border-radius: 4px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 250px;
+    
+    animation: slideIn 0.4s ease forwards;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+.achievement-toast.fade-out {
+    animation: slideOut 0.5s ease forwards;
+}
+
+@keyframes slideOut {
+    to {
+        transform: translateY(-20px);
+        opacity: 0;
+    }
+}
+
+#achievements-shelf {
+    margin-top: 25px;
+    background: rgba(33, 33, 33, 0.85);
+    border: 2px dashed #f6b216;
+    border-radius: 8px;
+    padding: 15px;
+    width: 100%;
+    max-width: 450px;
+    box-sizing: border-box;
+    font-family: 'DotGothic16', sans-serif;
+}
+
+#achievements-shelf h3 {
+    color: #ffcb05;
+    margin: 0 0 10px 0;
+    font-size: 16px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+#shelf-list {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+}
+
+.shelf-badge {
+    background: #1a1a1a;
+    border: 2px solid #555;
+    border-radius: 6px;
+    padding: 8px 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 180px; 
+    max-width: 280px;
+    box-shadow: inset 0 0 5px rgba(0,0,0,0.8);
+    animation: popBadge 0.3s ease forwards;
+}
+
+@keyframes popBadge {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+/* --- MÓVIL: el control de volumen no debe tapar el logo --- */
+@media (max-width: 600px) {
+    #audio-controls-global {
+        top: 10px;
+        left: 10px;
+        gap: 8px;
+        padding: 6px 12px;
+    }
+
+    #volume-slider {
+        width: 70px;
+    }
+
+    #app-container {
+        padding-top: 76px;
+    }
+}
