@@ -15,7 +15,7 @@
     --volume-slider-width: 160px;
 
     /* Footer */
-    --footer-height: 64px;
+    --footer-height: 52px;
 }
 
 body {
@@ -357,9 +357,9 @@ button:hover {
     font-family: inherit;
     color: #ffffff;
     opacity: 0.7;
-    font-size: 14px;
-    line-height: 1.5;
-    padding: 12px 10px;
+    font-size: 13px;
+    line-height: 1.4;
+    padding: 8px 10px;
     background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
     pointer-events: none;
     z-index: 999;
@@ -370,8 +370,8 @@ button:hover {
 }
 
 .game-footer .disclaimer {
-    font-size: 11px;
-    margin-top: 8px;
+    font-size: 10px;
+    margin-top: 4px;
     color: #cccccc;
     font-style: italic;
     padding: 0 10px;
@@ -542,12 +542,15 @@ button:hover {
 
 #achievement-container {
     position: fixed;
-    top: 20px;
+    top: calc(var(--audio-offset) + var(--audio-pill-height) + var(--audio-extra-gap));
     right: 20px;
     z-index: 9999; 
     display: flex;
     flex-direction: column;
     gap: 10px;
+    max-height: calc(100vh - var(--footer-height) - 30px);
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .achievement-toast {
@@ -562,6 +565,7 @@ button:hover {
     align-items: center;
     gap: 12px;
     min-width: 250px;
+    max-width: calc(100vw - 40px);
     
     animation: slideIn 0.4s ease forwards;
 }
@@ -642,5 +646,16 @@ button:hover {
 
     #app-container {
         padding-top: calc(var(--audio-offset) + var(--audio-pill-height) + var(--audio-extra-gap));
+    }
+
+    #achievement-container {
+        right: 10px;
+        left: 10px;
+    }
+
+    .achievement-toast {
+        min-width: 0;
+        width: 100%;
+        padding: 10px 14px;
     }
 }

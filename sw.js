@@ -1,10 +1,9 @@
-const CACHE_VERSION = 'pokememory-v4';
+const CACHE_VERSION = 'pokememory-v5';
 const APP_SHELL = [
     './',
     './index.html',
     './styles.css',
     './audio.js',
-    './footer.js',
     './theme.js',
     './board.js',
     './timer.js',
