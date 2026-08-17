@@ -31,8 +31,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
             let namesData = null;
             if (selectedMode === "pvp") {
-                const p1NameInput = document.getElementById("player1-name").value.trim();
-                const p2NameInput = document.getElementById("player2-name").value.trim();
+                const p1NameInput = document.getElementById("player1-name").value.trim().slice(0, 12);
+                const p2NameInput = document.getElementById("player2-name").value.trim().slice(0, 12);
                 
                 namesData = {
                     p1: p1NameInput || "Jugador 1",

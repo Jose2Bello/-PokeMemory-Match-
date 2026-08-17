@@ -1,4 +1,4 @@
-const CACHE_VERSION = 'pokememory-v5';
+const CACHE_VERSION = 'pokememory-v6';
 const APP_SHELL = [
     './',
     './index.html',
@@ -15,7 +15,11 @@ const APP_SHELL = [
     './icons/maskable-512.png',
     './icons/apple-touch-icon.png',
     './icons/favicon-96.png',
-    './assets/9889becb560835a3d47574202935f737.jpg'
+    './assets/9889becb560835a3d47574202935f737.jpg',
+    './assets/pokememory%20match.png',
+    './assets/800px-Viridian_Forest_HGSS.png',
+    './assets/Hoenn_Route_110_E.png',
+    './assets/320px-Sinnoh_Route_217_Pt.png'
 ];
 
 self.addEventListener('install', (event) => {
@@ -32,33 +36,24 @@ self.addEventListener('activate', (event) => {
     );
 });
 
-async function networkFirst(request, fallbackUrl) {
-    const cache = await caches.open(CACHE_VERSION);
-    try {
-        const response = await fetch(request);
-        if (response && response.ok && (response.type === 'basic' || response.type === 'cors')) {
-            cache.put(request, response.clone());
-        }
-        return response;
-    } catch (error) {
-        const cached = await cache.match(request);
-        return cached || cache.match(fallbackUrl);
-    }
-}
-
 async function cacheFirst(request) {
     const cache = await caches.open(CACHE_VERSION);
-    const cached = await cache.match(request);
+    const cached = await cache.match(request, { ignoreSearch: true });
     if (cached) return cached;
 
     try {
         const response = await fetch(request);
-        if (response && response.ok && (response.type === 'basic' || response.type === 'cors')) {
+        if (response && (response.status === 200 || response.type === 'opaque')) {
             cache.put(request, response.clone());
         }
         return response;
     } catch (error) {
-        return cache.match('./icons/icon-192.png');
+        const fallback = await cache.match(request, { ignoreSearch: true });
+        if (fallback) return fallback;
+        if (request.mode === 'navigate') {
+            return cache.match('./index.html');
+        }
+        return new Response('', { status: 408, statusText: 'Offline' });
     }
 }
 
@@ -66,11 +61,5 @@ self.addEventListener('fetch', (event) => {
     const { request } = event;
     if (request.method !== 'GET') return;
 
-    if (request.mode === 'navigate') {
-        event.respondWith(networkFirst(request, './index.html'));
-    } else {
-        const url = new URL(request.url);
-        const isCode = url.pathname.endsWith('.css') || url.pathname.endsWith('.js');
-        event.respondWith(isCode ? networkFirst(request, './index.html') : cacheFirst(request));
-    }
+    event.respondWith(cacheFirst(request));
 });

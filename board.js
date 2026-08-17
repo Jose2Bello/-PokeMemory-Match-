@@ -24,7 +24,7 @@ function createBoard(cards, difficulty, styles) {
     boardContainer.style.display = "grid";
     boardContainer.style.gridTemplateColumns = `repeat(${gridCols}, 1fr)`;
     boardContainer.style.gridTemplateRows = `repeat(${gridRows}, 1fr)`;
-    boardContainer.style.gap = "8px"; 
+    boardContainer.style.gap = difficulty === "hard" ? "4px" : (difficulty === "medium" ? "6px" : "8px"); 
 
     cards.forEach((cardData, index) => {
         const cardElement = document.createElement("div");
